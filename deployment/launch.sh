@@ -4,4 +4,4 @@ echo "Please enter node name:"
 read NODENAME
 echo "Please enter volume name:"
 read VOLUMENAME
-sudo ansible-playbook launch.yaml --extra-vars "nodename=$NODENAME volumename=$VOLUMENAME"
+sudo ansible-playbook launch.yml --extra-vars "nodename=$NODENAME volumename=$VOLUMENAME"

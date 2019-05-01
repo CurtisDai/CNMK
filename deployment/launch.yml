@@ -1,0 +1,58 @@
+---
+- name: Deploy on nectar
+  hosts: localhost
+  gather_facts: false
+  # vars_prompt:
+  #   - name: "your_password"
+  #     prompt: "What is your password to Nectar"
+
+  tasks:
+  # - name: deploy environment
+  #   shell: . ~/Desktop/unimelb-comp90024-group-17-openrc.sh
+
+  - name: Deploy an instance
+    os_server:
+      state: present
+      name: node1
+      # Ubuntu 18.04 LTS (Bionic) amd64 (pre-installed murano-agent with Docker)
+      image: e63dc981-997f-4971-b875-52f38bdd95cf
+      key_name: nectar
+      wait: yes
+      availability_zone: melbourne-qh2-uom
+      flavor: uom.mse.2c9g
+      network: qh2-uom-internal
+      auto_floating_ip: yes
+      meta:
+        hostname: webserver.localdomain
+    register: newwebserver
+
+  - name: debug
+    debug:
+      var: newwebserver
+
+
+  # - name: add notebook to inventory
+  #   lineinfile:
+  #     path: /etc/ansible/hosts
+  #     line: '{{ item }}'
+  #   with_items:
+  #     - "[Server]"
+  #     - "{{ newwebserver.openstack.public_v4 }} ansible_ssh_private_key_file=~/.ssh/nectar.pem"
+
+
+
+  - name: create volume
+    os_volume:
+      state: present
+      availability_zone: melbourne-qh2-uom
+      size: 75
+      display_name: volume1
+
+  - name: attach volume
+    os_server_volume:
+      state: present
+      # cloud: mordred
+      server: node1
+      volume: volume1
+      device: /dev/vdb
+
