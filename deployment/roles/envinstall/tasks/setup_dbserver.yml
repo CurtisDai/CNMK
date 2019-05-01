@@ -1,0 +1,55 @@
+---
+- hosts: dbsrvs 
+  remote_user: ubuntu
+  become: yes
+  
+  tasks:
+    - name: install apache2 
+      apt: name=apache2 update_cache=yes state=latest
+
+    - name: enabled mod_rewrite
+      apache2_module: name=rewrite state=present
+      notify:
+        - restart apache2
+
+    - name: Installs tools
+      apt: 
+        name: ['vim', 'python', 'curl', 'couchdb', 'libxml2-dev', 'libxslt1-dev', 'python-dev', python3-pip]
+        state: present
+
+    # - name: Install pip
+    #   easy_install: 
+    #     name: pip
+    #     state: latest
+
+    - name: Install couchdb package
+      pip: name=couchdb
+
+    - name: Install python textblob package
+      command: pip3 install textblob
+
+    - name: Install python tweepy package
+      command: pip3 install tweepy
+
+    - name: create new files
+      file: name=/data/{{ item }}
+
+      with_items:
+        - file1
+        - file2
+        - file3
+        
+        
+
+
+    # - name: Install Couchdb
+    #   script: galaxy-db1.sh
+
+    # - name: Couchdb configuration
+    #   script: db.sh
+      }
+      }
+
+  handlers:
+    - name: restart apache2
+      service: name=apache2 state=restarted
