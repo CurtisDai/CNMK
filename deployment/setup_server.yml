@@ -1,0 +1,181 @@
+---
+- hosts: 172.26.38.82 
+  remote_user: ubuntu
+  become: yes
+  
+  tasks:
+    - name: make a directory
+      file: 
+        path: /home/ubuntu/ngrok
+        state: directory
+
+    - name: add proxy discription
+      lineinfile:
+        path: /etc/environment
+        line: '{{ item }}'
+        #state: absent
+      with_items:
+        - "http_proxy=\"http://wwwproxy.unimelb.edu.au:8000\""
+        - "https_proxy=\"http://wwwproxy.unimelb.edu.au:8000\""
+        - "ftp_proxy=\"http://wwwproxy.unimelb.edu.au:8000\""
+
+
+    - name: install nginx
+      apt: name=nginx state=latest update_cache=yes
+
+    #use ngrok to set web proxy
+    - name: wget ngrok
+      get_url:
+        url: https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+        dest: /home/ubuntu/ngrok
+
+    - name: install unzip
+      apt: name=unzip state=present
+
+    - name: unzip ngrok
+      unarchive:
+        src: /home/ubuntu/ngrok/ngrok-stable-linux-amd64.zip
+        dest: /home/ubuntu/ngrok
+        remote_src: yes
+        creates: /home/ubuntu/ngrok/ngrok
+
+    #- name: mount http 80
+      #command: /home/ubuntu/ngrok/ngrok http 80
+
+
+    - name: install apache2 
+      apt: name=apache2 update_cache=yes state=latest
+
+    - name: enabled mod_rewrite
+      apache2_module: name=rewrite state=present
+      notify:
+        - restart apache2
+
+    - name: Installs tools
+      apt: 
+        name: ['vim','python','zip', 'curl', 'libxml2-dev', 'libxslt1-dev', 'python-dev', 'python3-pip']
+        state: present
+
+    # - name: Install pip
+    #   easy_install: 
+    #     name: pip
+    #     state: latest
+
+    
+
+    - name: Install python textblob package
+      command: pip3 install textblob
+
+    - name: Install python tweepy package
+      command: pip3 install tweepy
+
+    # - name: create new files
+    #   file: name=/data/{{ item }}
+
+    #   with_items:
+    #     - file1
+    #     - file2
+    #     - file3
+        
+        
+    # - name: "Copy Hosts file to Servers"
+    #   copy:
+    #     src: ../GetTwitterByName.py
+    #     dest: /mnt/data/GetTwitterByName.py
+    #     owner: root
+    #     group: root
+    #     mode: 0644
+    #     backup: yes
+
+    - name: Install python tweepy package
+      command: pip3 install couchdb
+
+    - name: make a directory
+      file: 
+        path: /mnt/data/web_server
+        state: directory
+
+    - name: "Copy Hosts file to Servers"
+      copy:
+        src: ../ccc_project.zip
+        dest: /mnt/data/web_server/ccc_project.zip
+        owner: root
+        group: root
+        mode: 0644
+        backup: yes
+
+    - name: unzip
+      unarchive:
+        src: /mnt/data/web_server/ccc_project.zip
+        dest: /mnt/data/web_server
+        remote_src: yes
+        creates: /mnt/data/web_server/ccc_project
+
+    - name: Installs tools
+      apt:
+        name: ['nodejs','npm']
+        state: present
+    
+    - name: install npm
+      shell: npm install -g @vue/cli
+    
+    - name: install npm
+      command: npm install --save-dev npm-install-webpack-plugin
+    
+    - name: make a directory
+      file: 
+        path: /mnt/data/couchdb
+        state: directory
+
+    - name: "Copy couchdb file to Servers"
+      copy:
+        src: ~/Desktop/couchDB.py
+        dest: /mnt/data/couchdb/couchDB.py
+        owner: root
+        group: root
+        mode: 0644
+        backup: yes
+
+
+    - name: "Copy file from Servers"
+      fetch:
+        src: /mnt/data/tweets_from_id_v3.json
+        dest: ~/Desktop/tweets_from_id_v3.json
+        # owner: root
+        # group: root
+        # mode: 0644
+        # backup: yes
+
+
+
+    # - name: install npm
+    #   command: npm install
+    #   args:
+    #     chdir: /mnt/data/web_server/ccc_project
+
+
+     # - name: run web_server
+
+
+    # - name: install npm
+    #   command: npm run dev
+    #   args:
+    #       chdir: /mnt/data/web_server/ccc_project
+
+
+
+
+    # - name: Install Couchdb
+    #   script: galaxy-db1.sh
+
+    # # - name: Couchdb configuration
+    # #   script: db.sh
+    #   }
+    #   }
+
+  handlers:
+    - name: restart apache2
+      service: name=apache2 state=restarted
+
+
+

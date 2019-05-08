@@ -1,0 +1,7 @@
+---
+- hosts: dbsrvs 
+  remote_user: ubuntu
+  become: yes
+  
+  tasks:
+    
