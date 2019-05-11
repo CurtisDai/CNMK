@@ -1,52 +1,8 @@
 ---
-- name: Deploy on nectar
+- name: Deploy instances on nectar
   hosts: localhost
-  gather_facts: false
+  gather_facts: true
+  vars_files: vars/vm_settings.yml
 
-  tasks:
-  - name: Deploy an instance
-    os_server:
-      state: present
-      name: "{{ item }}"
-      # Ubuntu 18.04 LTS (Bionic) amd64 (pre-installed murano-agent with Docker)
-      image: e63dc981-997f-4971-b875-52f38bdd95cf
-      key_name: nectar
-      wait: yes
-      availability_zone: melbourne-qh2-uom
-      flavor: uom.mse.2c9g
-      network: qh2-uom-internal
-      auto_floating_ip: yes
-      security_groups: ["default","http","ssh"]
-    register: "{{ item }}"
-    with_items:
-      - testnode2
-      - testnode1
-
-
-  # - name: add notebook to inventory
-  #   lineinfile:
-  #     path: /etc/ansible/hosts
-  #     line: '{{ item }}'
-  #   with_items:
-  #     - "[Server]"
-  #     - "{{ newwebserver.openstack.public_v4 }} ansible_ssh_private_key_file=~/.ssh/nectar.pem"
-
-
-
-  - name: create volume
-    os_volume:
-      state: present
-      availability_zone: melbourne-qh2-uom
-      size: 75
-      display_name: "{{ item }}"
-    with_items:
-      - volume1
-
-  - name: attach volume
-    os_server_volume:
-      state: present
-      # cloud: mordred
-      server: node1
-      volume: volume1
-      device: /dev/vdb
-
+  roles:
+    - role: instance
