@@ -1,0 +1,7 @@
+---
+- name: install web structure 
+      apt:
+        name: "{{ web_structure }}"
+        update_cache: yes
+        state: latest
+

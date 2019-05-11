@@ -1,0 +1,14 @@
+---
+- name: Deploy softwares docker and environment on all instances
+  hosts: "{{ hosts_group }}"
+  remote_user: ubuntu
+  become: yes
+  gather_facts: true
+  vars_files: vars/vm_settings.yml
+
+  roles:
+    # - role: mountvolume
+    # - role: network
+    - role: tool
+    # - role: docker
+    # - role: couchdb

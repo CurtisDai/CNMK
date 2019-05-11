@@ -1,0 +1,9 @@
+---
+- name: Create a ext4 filesystem on /dev/vdb
+  filesystem: fstype=ext4 dev=/dev/vdb
+
+- name: Creates directory 'data'
+  file: path=/mnt/data state=directory 
+
+- name: Mount up device
+  mount: name=/mnt/data src=/dev/vdb fstype=ext4 state=mounted

@@ -1,0 +1,77 @@
+#Here is the parameters for users who can change as they prefer 
+#Our group run these defult paras on our own vm
+#So you may need to heck by yourself that the paras you set are available on yours vm
+
+state: present
+
+instance:
+     name1: node1
+     name2: node2
+     name3: node3
+     name4: node4
+     # unimelb 
+     availability_zone: melbourne-qh2-uom
+     # 2 cores and 9GB
+     flavor: uom.mse.2c9g
+     image: NeCTAR Ubuntu 18.04 LTS (Bionic) amd64 (with Docker)
+     # unimelb internal network
+     network: qh2-uom-internal
+     # the key pair you want to use to login virtual machines, make sure you already create one befor run launch.sh
+     key_name: nectar
+     #the path where you store the key pair 
+     key_file_path: ~/.ssh/nectar.pem
+     
+
+
+
+
+volume:
+     name1: volume1
+     name2: volume2
+     name3: volume3
+     name4: volume4
+     volume_size: 62
+
+#used as the group name of hosts
+hosts_group: myServer
+
+
+web_structure: apache2
+essential_tools: ['vim', 'zip', 'unzip', 'curl', 'python-dev', 'pip', python3-pip', 'nodejs', 'npm']
+
+essential_packages: ['tweepy']
+couchdb_name: mycouchdb
+# #Security groups:
+
+security_rules:
+     - name: ssh
+       protocol: tcp
+       port_range_min: 22
+       port_range_max: 22
+       remote_ip_prefix: 0.0.0.0/0
+     - name: http
+       protocol: tcp
+       port_range_min: 80
+       port_range_max: 80
+       remote_ip_prefix: 0.0.0.0/0
+     - name: http
+       protocol: tcp
+       port_range_min: 443
+       port_range_max: 443
+       remote_ip_prefix: 0.0.0.0/0
+     - name: couchdb
+       protocol: tcp
+       port_range_min: 5984
+       port_range_max: 5984
+       remote_ip_prefix: 0.0.0.0/0
+     - name: couchdb
+       protocol: tcp
+       port_range_min: 4369
+       port_range_max: 4369
+       remote_ip_prefix: 0.0.0.0/0
+     - name: couchdb
+       protocol: tcp
+       port_range_min: 9100
+       port_range_max: 9200
+       remote_ip_prefix: 0.0.0.0/0
+

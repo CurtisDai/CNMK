@@ -1,0 +1,45 @@
+---
+- name: Install docker packages
+  apt:
+    name: docker.io
+    state: latest
+    update_cache: yes
+  # with_items:
+  #   - 
+  # tags:
+  #   - docker
+
+
+- name: install python-docker
+  pip:
+    name:
+      - docker
+      - requests>=2.20.1
+
+- name: Create a systemd drop-in directory for the docker service
+  file: 
+    path: /etc/systemd/system/docker.service.d
+    state: directory
+
+
+- name: create a file
+  file: 
+    name: /etc/systemd/system/docker.service.d/http-proxy.conf
+    state: touch
+
+- name: add proxy discription
+  lineinfile:
+    path: /etc/systemd/system/docker.service.d/http-proxy.conf
+    line: '{{ item }}'
+    state: present
+  with_items:
+    - "[Service]"
+    - "Environment=\"HTTP_PROXY=http://wwwproxy.unimelb.edu.au:8000\" \"NO_PROXY=localhost,127.0.0.1\""
+
+- name: flush
+  command: systemctl daemon-reload
+
+- name: restart
+  command: systemctl restart docker
+
+  
