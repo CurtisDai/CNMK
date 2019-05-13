@@ -242,7 +242,7 @@ class MyStreamListener(tweepy.StreamListener):
             update_db_location(data)
         else:
             add_db_location(data)
-            # print('true')
+            print('New User')
             GetTweetsFromAUser(id)
         # json.dump(data, outfile)
         # outfile.write('\n')
@@ -254,6 +254,7 @@ def main():
 
 def GetTweetsFromAUser(user_id):
     data_list = []
+    print('Trackback new user')
     for page in tweepy.Cursor(api.user_timeline, id=user_id, tweet_mode='extended', lan='en', count=9999).pages():
         tweet_num = 0
         for tweet in page:
