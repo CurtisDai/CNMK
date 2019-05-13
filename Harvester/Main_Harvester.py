@@ -127,7 +127,7 @@ def search_tweets_from_user_list(id_list):
 
     for index in range(index_input-int(sys.argv[6])/4, index_input):
         for page in tweepy.Cursor(api.user_timeline, id=id_list[index], tweet_mode='extended', lan='en',
-                                  count=9999).pages():
+                                  count=200).pages(1):
             for tweet in page:
                 tweet_num += 1
                 json_str = tweet._json
