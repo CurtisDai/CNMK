@@ -1,5 +1,6 @@
 import tweepy
 import json
+import couchdb
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 import sys
@@ -20,7 +21,84 @@ auth.set_access_token(access_token, access_token_secret)
 # get the info. with 'wait_on_rate_limit=True' to automatically wait for rate limits to replenish.
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
+#-------------------------------
 
+COUCHDB_SERVER = "http://admin:password@172.26.37.226:5984"
+DB_SCORE_NAME = "db_score"
+DB_LOCATION_NAME = "db_location"
+
+filename = "send_data" + str((sys.argv[5]))+".json"
+FILE_SCORE_PATH = filename
+FILE_LOCATION_PATH = "user_AU.json"
+
+DOC_QUERY_SCORE = {'_id': '_design/query_score',
+                 'views': {
+                     '_id': {
+                         'map': 'function(doc){emit(doc._id,doc)};'
+                     },
+                     'user_id': {
+                         'map': 'function(doc){emit(doc.user_id,doc)};'
+                     },
+                     'tweet_id': {
+                         'map': 'function(doc){emit(doc.tweet_id,doc)};'
+                     },
+                     'text': {
+                         'map': 'function(doc){emit(doc.text,doc)};'
+                     }
+                 }
+                 }
+DOC_QUERY_LOCATION = {'_id': '_design/query_location',
+                 'views': {
+                     '_id': {
+                         'map': 'function(doc){emit(doc._id,doc)};'
+                     },
+                     'user_id': {
+                         'map': 'function(doc){emit(doc.user_id,doc)};'
+                     },
+                     'location': {
+                         'map': 'function(doc){emit(doc.location,doc)};'
+                     }
+                 }
+                 }
+
+
+def get_db(db_name, query_name):
+    server = couchdb.Server(COUCHDB_SERVER)
+    try:
+        _db = server.create(db_name)
+        _db.save(query_name)
+    except:
+        _db = server[db_name]
+
+    return _db
+
+
+def set_db_score(file_score_path):
+    file_score = open(file_score_path)
+    docs_score = []
+    for i, _tweet in enumerate(file_score):
+        json_tweet = json.loads(_tweet)
+        doc = dict(time=json_tweet['time'], user_id=json_tweet['user_id'],
+                   tweet_id=json_tweet['tweet_id'], text=json_tweet['text'], sloth=json_tweet['Sloth:']) #####
+        docs_score.append(doc)
+
+    db_score = get_db(DB_SCORE_NAME, DOC_QUERY_SCORE)
+    db_score.update(docs_score)
+
+
+def set_db_location(file_location_path):
+    file_location = open(file_location_path)
+    docs_location = []
+    for i, _tweet in enumerate(file_location):
+        json_tweet = json.loads(_tweet)
+        doc = dict(time=json_tweet['time'], user_id=json_tweet['user_id'], place=json_tweet['place'],
+                   coordinate=json_tweet['coordinate'], polygon=json_tweet['polygon'])
+        docs_location.append(doc)
+
+    db_location = get_db(DB_LOCATION_NAME, DOC_QUERY_LOCATION)
+    db_location.update(docs_location)
+
+#--------------------------------------------------
 def getRelevantWord(words):
     work_word_list=[]
     for word in words:
@@ -66,10 +144,14 @@ def find_sa3(lon,lat):
 
 
 def main():
+    print('start')
     id_list = search_user_from_old_tweets()
     search_tweets_from_user_list(id_list)
-    GetTwitterLinsten()
+    # print(id_list)
+    set_db_location(FILE_LOCATION_PATH)
+
 def search_user_from_old_tweets():
+    print('start user')
     id_list = []
     # -----------------------------------------------------------------------
     # search all tweets 6-9 days ago, and only record the data from first tweet per user.
@@ -79,9 +161,11 @@ def search_user_from_old_tweets():
     place_id = places[0].id
     place_val = "place:%s" % place_id
     outfile = open('user_AU.json', 'w')
+    tweets_num = 0
     for page in tweepy.Cursor(api.search, q=place_val, count=9999).pages():
         try:
             for t in page:
+                tweets_num += 1
                 json_str = t._json
                 id = json_str['user']['id']
                 coordinates = [json_str['place']['bounding_box']['coordinates'][0][0],
@@ -116,6 +200,7 @@ def search_user_from_old_tweets():
 
 
 def search_tweets_from_user_list(id_list):
+    print('start tweets')
     # search old tweets of users from above searching.
     index_input = int(sys.argv[5])
     file_name = 'send_data'+ str(index_input)+'.json'
@@ -123,13 +208,13 @@ def search_tweets_from_user_list(id_list):
     # total_tweet_num = 0
     # print('start search tweets')
     # data_list = []
+    total_tweet_num = 0
     tweet_num = 0
-
-    for index in range(index_input-int(sys.argv[6])/4, index_input):
+    for index in range(index_input-int(int(sys.argv[6])/4), index_input):
         for page in tweepy.Cursor(api.user_timeline, id=id_list[index], tweet_mode='extended', lan='en',
-                                  count=200).pages(1):
+                                  count=10).pages(1):
             for tweet in page:
-                tweet_num += 1
+                total_tweet_num += 1
                 json_str = tweet._json
                 data = {'time': str(tweet.created_at), 'user_id': id_list[index], 'tweet_id': json_str['id'],
                         'text': str(tweet.full_text), 'Sloth:': scoringText(str(tweet.full_text), [])}
@@ -138,14 +223,16 @@ def search_tweets_from_user_list(id_list):
                 file.write('\n')
                 file.flush()
 
-                # if tweet_num == 5000:
-                #     tweet_num = 0
-                #     # send file to database, print('Empty file')
-                #     # clear the file
-                #     file.truncate(0)
+                if total_tweet_num == 50:
+                    print('upload')
+                    total_tweet_num = 0
+                    set_db_score(FILE_SCORE_PATH)
+                    # send file to database, print('Empty file')
+                    # clear the file
+                    file.truncate(0)
         # total_tweet_num += tweet_num
         # print(id_val, ' Tweets num:', tweet_num)
-    # print('Total tweets:', total_tweet_num)
+        print('Total tweets:', str(total_tweet_num))
 
 
 main()
