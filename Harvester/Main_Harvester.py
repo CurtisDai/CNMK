@@ -107,7 +107,7 @@ def search_user_from_old_tweets():
                     outfile.write('\n')
                     outfile.flush()
             # print('Total processed tweets: ', tweets_num, 'Total unique id:', len(id_list))
-            if len(id_list) > 100:
+            if len(id_list) > int(sys.argv[6]):
                 break
         except tweepy.RateLimitError as e:
             print(e)
@@ -125,7 +125,7 @@ def search_tweets_from_user_list(id_list):
     # data_list = []
     tweet_num = 0
 
-    for index in range(index_input - 25, index_input):
+    for index in range(index_input-int(sys.argv[6])/4, index_input):
         for page in tweepy.Cursor(api.user_timeline, id=id_list[index], tweet_mode='extended', lan='en',
                                   count=9999).pages():
             for tweet in page:
