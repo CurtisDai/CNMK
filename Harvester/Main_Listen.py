@@ -242,7 +242,7 @@ class MyStreamListener(tweepy.StreamListener):
             update_db_location(data)
         else:
             add_db_location(data)
-            print('true')
+            # print('true')
             GetTweetsFromAUser(id)
         # json.dump(data, outfile)
         # outfile.write('\n')
@@ -261,7 +261,7 @@ def GetTweetsFromAUser(user_id):
             json_str = tweet._json
             data = {'time': str(tweet.created_at), 'user_id': user_id, 'tweet_id': json_str['id'],
                     'text': str(tweet.full_text), 'Sloth:': scoringText(str(tweet.full_text), [])}
-            print('uploadtweet')
+            # print('uploadtweet')
             add_db_score(data)
 
     # print('# of tweets of ' , user_id, ' : ', len(data_list))

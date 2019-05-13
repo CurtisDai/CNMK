@@ -27,8 +27,7 @@ COUCHDB_SERVER = "http://admin:password@172.26.37.226:5984"
 DB_SCORE_NAME = "db_score"
 DB_LOCATION_NAME = "db_location"
 
-filename = "send_data" + str((sys.argv[5]))+".json"
-FILE_SCORE_PATH = filename
+FILE_SCORE_PATH = 'send_data'+ str(int(sys.argv[5]))+'.json'
 FILE_LOCATION_PATH = "user_AU.json"
 
 DOC_QUERY_SCORE = {'_id': '_design/query_score',
@@ -204,7 +203,7 @@ def search_tweets_from_user_list(id_list):
     # search old tweets of users from above searching.
     index_input = int(sys.argv[5])
     file_name = 'send_data'+ str(index_input)+'.json'
-    file = open(file_name , 'w', buffering= 50)
+    file = open(file_name, 'w', buffering=50)
     # total_tweet_num = 0
     # print('start search tweets')
     # data_list = []
@@ -212,27 +211,30 @@ def search_tweets_from_user_list(id_list):
     tweet_num = 0
     for index in range(index_input-int(int(sys.argv[6])/4), index_input):
         for page in tweepy.Cursor(api.user_timeline, id=id_list[index], tweet_mode='extended', lan='en',
-                                  count=10).pages(1):
+                                  count=200).pages(5):
             for tweet in page:
                 total_tweet_num += 1
                 json_str = tweet._json
                 data = {'time': str(tweet.created_at), 'user_id': id_list[index], 'tweet_id': json_str['id'],
                         'text': str(tweet.full_text), 'Sloth:': scoringText(str(tweet.full_text), [])}
                 # print(data)
+
                 json.dump(data, file)
                 file.write('\n')
                 file.flush()
 
-                if total_tweet_num == 50:
-                    print('upload')
-                    total_tweet_num = 0
+                if total_tweet_num == 1000:
                     set_db_score(FILE_SCORE_PATH)
+                    file.close()
+                    file = open(file_name, 'w', buffering=50)
+                    # print('upload')
+                    total_tweet_num = 0
                     # send file to database, print('Empty file')
                     # clear the file
-                    file.truncate(0)
+
         # total_tweet_num += tweet_num
         # print(id_val, ' Tweets num:', tweet_num)
-        print('Total tweets:', str(total_tweet_num))
+        # print('Total tweets:', str(total_tweet_num))
 
 
 main()
