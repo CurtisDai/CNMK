@@ -1,104 +1,23 @@
 ---
-- hosts: 172.26.38.82 
+- hosts: slave3
   remote_user: ubuntu
   become: yes
   
   tasks:
     - name: make a directory
       file: 
-        path: /home/ubuntu/ngrok
-        state: directory
-
-    - name: add proxy discription
-      lineinfile:
-        path: /etc/environment
-        line: '{{ item }}'
-        #state: absent
-      with_items:
-        - "http_proxy=\"http://wwwproxy.unimelb.edu.au:8000\""
-        - "https_proxy=\"http://wwwproxy.unimelb.edu.au:8000\""
-        - "ftp_proxy=\"http://wwwproxy.unimelb.edu.au:8000\""
-
-
-    - name: install nginx
-      apt: name=nginx state=latest update_cache=yes
-
-    #use ngrok to set web proxy
-    - name: wget ngrok
-      get_url:
-        url: https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
-        dest: /home/ubuntu/ngrok
-
-    - name: install unzip
-      apt: name=unzip state=present
-
-    - name: unzip ngrok
-      unarchive:
-        src: /home/ubuntu/ngrok/ngrok-stable-linux-amd64.zip
-        dest: /home/ubuntu/ngrok
-        remote_src: yes
-        creates: /home/ubuntu/ngrok/ngrok
-
-    #- name: mount http 80
-      #command: /home/ubuntu/ngrok/ngrok http 80
-
-
-    - name: install apache2 
-      apt: name=apache2 update_cache=yes state=latest
-
-    - name: enabled mod_rewrite
-      apache2_module: name=rewrite state=present
-      notify:
-        - restart apache2
-
-    - name: Installs tools
-      apt: 
-        name: ['vim','python','zip', 'curl', 'libxml2-dev', 'libxslt1-dev', 'python-dev', 'python3-pip']
-        state: present
-
-    # - name: Install pip
-    #   easy_install: 
-    #     name: pip
-    #     state: latest
-
-    
-
-    - name: Install python textblob package
-      command: pip3 install textblob
-
-    - name: Install python tweepy package
-      command: pip3 install tweepy
-
-    # - name: create new files
-    #   file: name=/data/{{ item }}
-
-    #   with_items:
-    #     - file1
-    #     - file2
-    #     - file3
-        
-        
-    # - name: "Copy Hosts file to Servers"
-    #   copy:
-    #     src: ../GetTwitterByName.py
-    #     dest: /mnt/data/GetTwitterByName.py
-    #     owner: root
-    #     group: root
-    #     mode: 0644
-    #     backup: yes
-
-    - name: Install python tweepy package
-      command: pip3 install couchdb
+        path: /mnt/data/harvester
+        state: absent
 
     - name: make a directory
       file: 
-        path: /mnt/data/web_server
+        path: /mnt/data/harvester
         state: directory
 
     - name: "Copy Hosts file to Servers"
       copy:
-        src: ../ccc_project.zip
-        dest: /mnt/data/web_server/ccc_project.zip
+        src: ../harvester.zip
+        dest: /mnt/data/harvester/harvester.zip
         owner: root
         group: root
         mode: 0644
@@ -106,76 +25,50 @@
 
     - name: unzip
       unarchive:
-        src: /mnt/data/web_server/ccc_project.zip
-        dest: /mnt/data/web_server
+        src: /mnt/data/harvester/harvester.zip
+        dest: /mnt/data/harvester
         remote_src: yes
-        creates: /mnt/data/web_server/ccc_project
+        creates: /mnt/data/harvester/harvester
 
-    - name: Installs tools
-      apt:
-        name: ['nodejs','npm']
-        state: present
-    
-    - name: install npm
-      shell: npm install -g @vue/cli
-    
-    - name: install npm
-      command: npm install --save-dev npm-install-webpack-plugin
-    
-    - name: make a directory
-      file: 
-        path: /mnt/data/couchdb
-        state: directory
-
-    - name: "Copy couchdb file to Servers"
-      copy:
-        src: ~/Desktop/couchDB.py
-        dest: /mnt/data/couchdb/couchDB.py
-        owner: root
-        group: root
-        mode: 0644
-        backup: yes
-
-
-    - name: "Copy file from Servers"
-      fetch:
-        src: /mnt/data/tweets_from_id_v3.json
-        dest: ~/Desktop/tweets_from_id_v3.json
-        # owner: root
-        # group: root
-        # mode: 0644
-        # backup: yes
-
-
-
-    # - name: install npm
-    #   command: npm install
+    # - name: run harvester
+    #   shell: nohup python3 Main_Harvester.py LzOxVuyHgGu9QP4b8skZxUVvS nbLuOAibNpCiiLfgsMwKTPiV4PYNhTK21ddWli40T3dI08YgY4 1120218841278115840-6CgqMItD1yLdo1ejbnhfgNfIBz5upA TqcBGcTzgNKkkLipAw3wmHek8iTg8bM7vwirfL7wYT23t 5000 20000 &
     #   args:
-    #     chdir: /mnt/data/web_server/ccc_project
-
-
-     # - name: run web_server
-
-
-    # - name: install npm
-    #   command: npm run dev
+    #     chdir: /mnt/data/harvester/harvester
+    # - name: run harvester
+    #   shell: nohup python3 Main_Harvester.py ixowvyfcvBUrJ5EvEjBknxFDb RCJyd2ufW3aWZLykF1FOvsqC4q3gJIeeF5D7aHaqILrSc3MaZx 1127792942859423744-bAHDjdmgAkyd85ci56cI8cqhLTCIPo U6N2IvWrFW8T2LvEiKPziEpCVtO86wKgQtzFNx8d8n6aw 10000 20000 &
     #   args:
-    #       chdir: /mnt/data/web_server/ccc_project
+    #     chdir: /mnt/data/harvester/harvester
+    # - name: run harvester
+    #   shell: nohup python3 Main_Harvester.py qNM0Oq97DR3VcX7prwVTzvfog nXxUSJKGI9G3vNw7SU5vkB4JYvrqTNgs0Y96nQdSBi1tByMeF4 1127796807260459008-EnIm1VJhsOirsdcr7ahaTelMjqLujr GHzni3rwi0YtBAyJFgSV0Q6IwhQuR92zO1T8WlqGnDfiO 15000 20000 &
+    #   args:
+    #     chdir: /mnt/data/harvester/harvester
+    - name: run harvester
+      shell: nohup python3 Main_Harvester.py fF3Ga382lSPnu8S35q3al9R8t OocybjkiOs5l32YgJJ7UrE5dIA7IgPp29So5pIzztCpFLvLz08 1127799065117216768-9W8FOQD4VGP1tofGtvTjfi9GhtAP8e felNrM5rfj0REI3ArkM8T5wMV5s9TEAIFL0DTpkPQ69nw 20000 20000 &
+      args:
+        chdir: /mnt/data/harvester/harvester
 
 
 
 
-    # - name: Install Couchdb
-    #   script: galaxy-db1.sh
+    # - name: run tweets listen
+    #   shell: nohup python3 Main_Listen.py LzOxVuyHgGu9QP4b8skZxUVvS nbLuOAibNpCiiLfgsMwKTPiV4PYNhTK21ddWli40T3dI08YgY4 1120218841278115840-6CgqMItD1yLdo1ejbnhfgNfIBz5upA TqcBGcTzgNKkkLipAw3wmHek8iTg8bM7vwirfL7wYT23t 112.921114 -26.441329 134.0151665 -9.142176 &
+    #   args:
+    #     chdir: /mnt/data/harvester/harvester
+    # - name: run tweets listen
+    #   shell: nohup python3 Main_Listen.py ixowvyfcvBUrJ5EvEjBknxFDb RCJyd2ufW3aWZLykF1FOvsqC4q3gJIeeF5D7aHaqILrSc3MaZx 1127792942859423744-bAHDjdmgAkyd85ci56cI8cqhLTCIPo U6N2IvWrFW8T2LvEiKPziEpCVtO86wKgQtzFNx8d8n6aw 112.921114 -43.740482 134.0151665 -26.441329 &
+    #   args:
+    #     chdir: /mnt/data/harvester/harvester
 
-    # # - name: Couchdb configuration
-    # #   script: db.sh
-    #   }
-    #   }
+    # - name: run tweets listen
+    #   shell: nohup python3 Main_Listen.py qNM0Oq97DR3VcX7prwVTzvfog nXxUSJKGI9G3vNw7SU5vkB4JYvrqTNgs0Y96nQdSBi1tByMeF4 1127796807260459008-EnIm1VJhsOirsdcr7ahaTelMjqLujr GHzni3rwi0YtBAyJFgSV0Q6IwhQuR92zO1T8WlqGnDfiO 134.0151665 -26.441329 159.109219 -9.142176 &
+    #   args:
+    #     chdir: /mnt/data/harvester/harvester
+    - name: run tweets listen
+      shell: nohup python3 Main_Listen.py fF3Ga382lSPnu8S35q3al9R8t OocybjkiOs5l32YgJJ7UrE5dIA7IgPp29So5pIzztCpFLvLz08 1127799065117216768-9W8FOQD4VGP1tofGtvTjfi9GhtAP8e felNrM5rfj0REI3ArkM8T5wMV5s9TEAIFL0DTpkPQ69nw 134.0151665 -43.740482 159.109219 -26.441329 &
+      args:
+        chdir: /mnt/data/harvester/harvester
 
-  handlers:
-    - name: restart apache2
-      service: name=apache2 state=restarted
+
 
 
 

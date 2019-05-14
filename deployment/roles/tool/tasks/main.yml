@@ -5,32 +5,19 @@
 #     update_cache: yes
 #     state: latest
 
-- name: install python3
+- name: install all essential tools 
   apt:
-    name: python3
+    name: "{{ essential_tools }}"
     update_cache: yes
     state: present
 
-- name: install pip3
-  apt:
-    name: python3-pip
-    state: latest
 
-- name: install pip
-  apt:
-    name: python-pip
-    state: latest
+- name: install tweepy
+  command: pip3 install tweepy
 
-- name: install vim
-  apt:
-    name: vim
-    state: latest
-
-- name: install erlang-base
-  apt:
-    name: erlang-base-hipe
-    state: latest
+- name: install Shapely
+  command: pip3 install Shapely
 
 - name: install nltk
-  pip:
-    name: nltk
+  command: pip3 install nltk
+

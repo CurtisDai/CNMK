@@ -5,4 +5,5 @@
   vars_files: vars/vm_settings.yml
 
   roles:
+    - role: security_groups
     - role: instance

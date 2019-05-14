@@ -1,31 +1,5 @@
 ---
-- name: Create security group
-  os_security_group:
-          name: "{{ item.name }}"
-          description: "{{ item.description }}"
-          state: present
-  with_items:
-    - name: ssh
-      description: visit with ssh
-    - name: http
-      description: visit with http
-    - name: couchdb
-      description: for clustered couchdb
-
-- name: Create security group rules
-  os_security_group_rule:
-          security_group: "{{ item.name }}"
-          protocol: "{{ item.protocol }}"
-          port_range_min: "{{ item.port_range_min }}"
-          port_range_max: "{{ item.port_range_max }}"
-          remote_ip_prefix: "{{ item.remote_ip_prefix }}"
-          state: present
-  with_items: "{{ security_rules }}"
-
-
-
-
-- name: Create instance1
+- name: Create instance master
   os_server:
     state: "{{ state }}"
     name: "{{ instance.name1 }}"
@@ -40,8 +14,7 @@
     security_groups: ["couchdb","http","ssh"]
   register: server1
 
-- debug:
-    msg: "IP address of node1: {{ server1.openstack.public_v4 }}"
+
 
 - name: Create instance2
   os_server:
@@ -58,8 +31,6 @@
     security_groups: ["couchdb","http","ssh"]
   register: server2
 
-- debug:
-    msg: "IP address of node2: {{ server2.openstack.public_v4 }}"
 
 - name: Create instance3
   os_server:
@@ -76,8 +47,7 @@
     security_groups: ["couchdb","http","ssh"]
   register: server3
 
-- debug:
-    msg: "IP address of node3: {{ server3.openstack.public_v4 }}"
+
 
 - name: Create instance4
   os_server:
@@ -94,17 +64,23 @@
     security_groups: ["couchdb","http","ssh"]
   register: server4
 
-- debug:
-    msg: "IP address of node4: {{ server4.openstack.public_v4 }}"
 
-- name: create volume
+
+- name: create volume for master
   os_volume:
     state: "{{ state }}"
     availability_zone: "{{ instance.availability_zone }}"
-    size: "{{ volume.volume_size }}"
+    size: "{{ volume.volume_size_master }}"
+    display_name: "{{ volume.name1 }}"
+
+
+- name: create volume for slave
+  os_volume:
+    state: "{{ state }}"
+    availability_zone: "{{ instance.availability_zone }}"
+    size: "{{ volume.volume_size_slave }}"
     display_name: "{{ item }}"
   with_items:
-    - "{{ volume.name1 }}"
     - "{{ volume.name2 }}"
     - "{{ volume.name3 }}"
     - "{{ volume.name4 }}"
@@ -133,11 +109,15 @@
     path: /etc/ansible/hosts
     line: '{{ item }}'
   with_items:
-    - "[{{ hosts_group }}]"
+    - "[master]"
     - "{{ server1.openstack.public_v4 }} ansible_ssh_private_key_file={{ instance.key_file_path }}"
+    - "[slave1]"
     - "{{ server2.openstack.public_v4 }} ansible_ssh_private_key_file={{ instance.key_file_path }}"
+    - "[slave2]"
     - "{{ server3.openstack.public_v4 }} ansible_ssh_private_key_file={{ instance.key_file_path }}"
+    - "[slave3]"
     - "{{ server4.openstack.public_v4 }} ansible_ssh_private_key_file={{ instance.key_file_path }}"
+
 
 - name: change host_key_checking to false
   become: yes
@@ -148,5 +128,29 @@
     line: host_key_checking = False
 
 
+- name: add hosts to inventory
+  become: yes
+  lineinfile:
+    state: "{{ state }}"
+    path: "{{ playbook_dir }}/vars/vm_settings.yml"
+    line: '{{ item }}'
+  with_items:
+    - "master_IP: {{ server1.openstack.public_v4 }}"
+    - "slave1_IP: {{ server2.openstack.public_v4 }}"
+    - "slave2_IP: {{ server3.openstack.public_v4 }}"
+    - "slave3_IP: {{ server4.openstack.public_v4 }}"
+
+
+- debug:
+    msg: "IP address of master: {{ server1.openstack.public_v4 }}"
+
+- debug:
+    msg: "IP address of slave1: {{ server2.openstack.public_v4 }}"
+
+- debug:
+    msg: "IP address of slave2: {{ server3.openstack.public_v4 }}"
+
+- debug:
+    msg: "IP address of slave3: {{ server4.openstack.public_v4 }}"
 
 

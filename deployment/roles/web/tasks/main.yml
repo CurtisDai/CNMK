@@ -1,0 +1,92 @@
+---
+- name: make a directory
+  file: 
+    path: /mnt/data/web_server
+    state: directory
+
+- name: "Copy Hosts file to Servers"
+  copy:
+    src: ../front+back.zip
+    dest: /mnt/data/web_server/front+back.zip
+    owner: ubuntu
+    group: ubuntu
+    mode: 0777
+    backup: yes
+
+- name: unzip
+  unarchive:
+    src: /mnt/data/web_server/front+back.zip
+    dest: /mnt/data/web_server
+    remote_src: yes
+    owner: ubuntu
+    group: ubuntu
+    mode: 0777
+    backup: yes
+    creates: /mnt/data/web_server/DeadlySins
+
+
+- name: install web dependencies
+  shell: npm install 
+  become: yes
+  args:
+    chdir: /mnt/data/web_server/DeadlySins
+
+- name: install "{{ item }}"
+  shell: pip3 install "{{ item }}"
+  with_items:
+    - flask
+    - flask_cors
+
+- name: run flask
+  shell: nohup python3 flaskapp.py &
+  become: yes
+  args:
+    chdir: /mnt/data/web_server/flask/
+
+# - name: run web
+#   shell: nohup npm run dev -172.26.37.234 &
+#   become: yes
+#   args:
+#     chdir: /mnt/data/web_server/DeadlySins/
+
+
+# - name: make a directory
+#   file: 
+#     path: /mnt/data/harvester
+#     state: directory
+
+# - name: "Copy Hosts file to Servers"
+#   copy:
+#     src: ../harvester.zip
+#     dest: /mnt/data/harvester/harvester.zip
+#     owner: root
+#     group: root
+#     mode: 0644
+#     backup: yes
+
+# - name: unzip
+#   unarchive:
+#     src: /mnt/data/harvester/harvester.zip
+#     dest: /mnt/data/harvester
+#     remote_src: yes
+#     creates: /mnt/data/harvester/harvester
+
+# - name: run harvester
+#   shell: ./run.sh
+#   args:
+#     chdir: /mnt/data/harvester/harvester
+
+# - name: Installs tools
+#   apt:
+#     name: ['nodejs','npm']
+#     state: present
+
+# - name: install npm
+#   shell: npm install
+
+
+# - name: install npm
+#   shell: npm run build -http://"{{ ansible_eth0.ipv4.address }}":5000/
+#   args:
+#     chdir: /mnt/data/web_server/DeadlySins
+

@@ -1,6 +1,6 @@
 ---
 - name: Deploy softwares docker and environment on all instances
-  hosts: "{{ hosts_group }}"
+  hosts: all
   remote_user: ubuntu
   become: yes
   gather_facts: true
@@ -9,6 +9,10 @@
   roles:
     # - role: mountvolume
     # - role: network
-    - role: tool
+    # - role: tool
     # - role: docker
     # - role: couchdb
+    # - role: web
+    # - role: spark_hadoop
+    - role: harvester
+

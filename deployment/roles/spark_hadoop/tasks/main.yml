@@ -1,0 +1,204 @@
+---
+# - name: add hosts
+#   lineinfile:
+#     path: /etc/hosts
+#     line: '{{ item }}'
+#     state: present
+#   with_items:
+#     - "{{ master_IP }} master"
+#     - "{{ slave1_IP }} slave01"
+#     - "{{ slave2_IP }} slave02"
+#     - "{{ slave3_IP }} slave03"
+
+# - name: install pexpect
+#   pip:
+#     name: pexpect
+#   become: yes
+
+# - name: Installs python-software-properties
+#   apt:
+#     name: ['software-properties-common', 'openjdk-11-jdk-headless']
+#     state: latest
+
+# - name: install java
+#   expect:
+#     command: sudo apt install default-jre
+#     responses:
+#       "Do you want to continue? [Y/n] ": "Y"
+#     echo: yes
+
+# - name: Installs scala
+#   apt:
+#     name: ['scala']
+#     state: latest
+
+
+# - name: make a directory
+#   file: 
+#     path: /home/ubuntu/spark
+#     state: directory
+
+# - name: wget spark
+#   get_url:
+#     url: http://www-us.apache.org/dist/spark/spark-2.4.3/spark-2.4.3-bin-hadoop2.7.tgz
+#     dest: /home/ubuntu/spark
+
+# - name: Unarchive a file that is already on the remote machine
+#   unarchive:
+#     src: /home/ubuntu/spark/spark-2.4.3-bin-hadoop2.7.tgz
+#     dest: /home/ubuntu/spark
+#     remote_src: yes
+
+# - name: Move Spark software files
+#   command: mv spark-2.4.3-bin-hadoop2.7 /usr/local/spark
+#   args:
+#     chdir: /home/ubuntu/spark
+
+
+# - name: make a directory
+#   file: 
+#     path: /home/ubuntu/spark
+#     state: directory
+
+- name: Set up the environment for Spark
+  lineinfile:
+    path: ~/.bashrc 
+    line: "export PATH = $PATH:/usr/local/spark/bin"
+    state: present
+
+
+- name: sourcing the ~/.bashrc file.
+  become: no   
+  shell: . ~/.bashrc 
+  args:
+     executable: /bin/bash
+
+
+# - name: Edit spark-env.sh
+#   hosts: master
+#   command: cp spark-env.sh.template spark-env.sh
+#   args:
+#     chdir: /usr/local/spark/conf
+
+# - name: edit the configuration file spark-env.sh
+#   lineinfile:
+#     path: /usr/local/spark/conf/spark-env.sh
+#     line: '{{ item }}'
+#     state: present
+#     with_items:
+#       - "export SPARK_MASTER_HOST='{{ master_IP }}'"
+#       - "export JAVA_HOME=/usr/bin/java"
+
+# - name: Edit the configuration file slaves
+#   lineinfile:
+#     path: /usr/local/spark/conf/slaves
+#     line: '{{ item }}'
+#     state: present
+#     with_items:
+#       - "master"
+#       - "slave01"
+#       - "slave02"
+#       - "slave03"
+
+
+# - name: make a directory
+#   file: 
+#     path: /mnt/data/web_server
+#     state: directory
+
+# - name: "Copy Hosts file to Servers"
+#   copy:
+#     src: ../front+back.zip
+#     dest: /mnt/data/web_server/front+back.zip
+#     owner: ubuntu
+#     group: ubuntu
+#     mode: 0777
+#     backup: yes
+
+# - name: unzip
+#   unarchive:
+#     src: /mnt/data/web_server/front+back.zip
+#     dest: /mnt/data/web_server
+#     remote_src: yes
+#     owner: ubuntu
+#     group: ubuntu
+#     mode: 0777
+#     backup: yes
+#     creates: /mnt/data/web_server/DeadlySins
+
+
+# - name: install web dependencies
+#   shell: npm install 
+#   become: yes
+#   args:
+#     chdir: /mnt/data/web_server/DeadlySins
+
+# - name: install "{{ item }}"
+#   shell: pip3 install "{{ item }}"
+#   with_items:
+#     - flask
+#     - flask_cors
+
+# - name: run flask
+#   shell: nohup python3 flaskapp.py &
+#   become: yes
+#   args:
+#     chdir: /mnt/data/web_server/flask/
+
+# - name: run web
+#   shell: nohup npm run dev -172.26.37.234 &
+#   become: yes
+#   args:
+#     chdir: /mnt/data/web_server/DeadlySins/
+
+
+# - name: Installs tools
+#   apt:
+#     name: ['nodejs','npm']
+#     state: latest
+
+# # - name: install npm
+#   shell: npm install
+
+
+
+# - name: make a directory
+#   file: 
+#     path: /mnt/data/harvester
+#     state: directory
+
+# - name: "Copy Hosts file to Servers"
+#   copy:
+#     src: ../harvester.zip
+#     dest: /mnt/data/harvester/harvester.zip
+#     owner: root
+#     group: root
+#     mode: 0644
+#     backup: yes
+
+# - name: unzip
+#   unarchive:
+#     src: /mnt/data/harvester/harvester.zip
+#     dest: /mnt/data/harvester
+#     remote_src: yes
+#     creates: /mnt/data/harvester/harvester
+
+# - name: run harvester
+#   shell: ./run.sh
+#   args:
+#     chdir: /mnt/data/harvester/harvester
+
+# - name: Installs tools
+#   apt:
+#     name: ['nodejs','npm']
+#     state: present
+
+# - name: install npm
+#   shell: npm install
+
+
+# - name: install npm
+#   shell: npm run build -http://"{{ ansible_eth0.ipv4.address }}":5000/
+#   args:
+#     chdir: /mnt/data/web_server/DeadlySins
+

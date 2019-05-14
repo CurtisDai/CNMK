@@ -5,10 +5,10 @@
 state: present
 
 instance:
-     name1: node1
-     name2: node2
-     name3: node3
-     name4: node4
+     name1: master
+     name2: slave1
+     name3: slave2
+     name4: slave3
      # unimelb 
      availability_zone: melbourne-qh2-uom
      # 2 cores and 9GB
@@ -21,27 +21,23 @@ instance:
      #the path where you store the key pair 
      key_file_path: ~/.ssh/nectar.pem
      
-
-
-
-
 volume:
-     name1: volume1
-     name2: volume2
-     name3: volume3
-     name4: volume4
-     volume_size: 62
+     name1: master
+     name2: slave1
+     name3: slave2
+     name4: slave3
+     volume_size_master: 100
+     volume_size_slave: 50
 
 #used as the group name of hosts
 hosts_group: myServer
 
 
 web_structure: apache2
-essential_tools: ['vim', 'zip', 'unzip', 'curl', 'python-dev', 'pip', python3-pip', 'nodejs', 'npm']
+essential_tools: ['vim','python3', 'zip', 'unzip', 'curl', 'python-dev', 'python-pip', 'python3-pip', 'nodejs', 'npm', 'docker.io']
 
-essential_packages: ['tweepy']
+
 couchdb_name: mycouchdb
-# #Security groups:
 
 security_rules:
      - name: ssh
@@ -59,19 +55,28 @@ security_rules:
        port_range_min: 443
        port_range_max: 443
        remote_ip_prefix: 0.0.0.0/0
-     - name: couchdb
+     - name: http
+       protocol: tcp
+       port_range_min: 5000
+       port_range_max: 5000
+       remote_ip_prefix: 0.0.0.0/0
+     - name: server
        protocol: tcp
        port_range_min: 5984
        port_range_max: 5984
        remote_ip_prefix: 0.0.0.0/0
-     - name: couchdb
+     - name: server
        protocol: tcp
        port_range_min: 4369
        port_range_max: 4369
        remote_ip_prefix: 0.0.0.0/0
-     - name: couchdb
+     - name: server
        protocol: tcp
        port_range_min: 9100
        port_range_max: 9200
        remote_ip_prefix: 0.0.0.0/0
 
+master_IP: 172.26.37.226
+slave1_IP: 172.26.37.234
+slave2_IP: 172.26.38.22
+slave3_IP: 172.26.37.175

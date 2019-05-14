@@ -1,0 +1,28 @@
+---
+- name: Create security group
+  os_security_group:
+          name: "{{ item.name }}"
+          description: "{{ item.description }}"
+          state: present
+  with_items:
+    - name: ssh
+      description: visit with ssh
+    - name: http
+      description: visit with http
+    - name: server
+      description: for clustered couchdb
+
+- name: Create security group rules
+  os_security_group_rule:
+          security_group: "{{ item.name }}"
+          protocol: "{{ item.protocol }}"
+          port_range_min: "{{ item.port_range_min }}"
+          port_range_max: "{{ item.port_range_max }}"
+          remote_ip_prefix: "{{ item.remote_ip_prefix }}"
+          state: present
+  with_items: "{{ security_rules }}"
+
+
+
+
+

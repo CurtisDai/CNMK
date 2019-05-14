@@ -1,15 +1,4 @@
 ---
-- name: Install docker packages
-  apt:
-    name: docker.io
-    state: latest
-    update_cache: yes
-  # with_items:
-  #   - 
-  # tags:
-  #   - docker
-
-
 - name: install python-docker
   pip:
     name:
@@ -42,4 +31,4 @@
 - name: restart
   command: systemctl restart docker
 
-  
+

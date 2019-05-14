@@ -1,4 +1,0 @@
-[websrvs]
-172.26.38.82 ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/nectar.pem
-
-
