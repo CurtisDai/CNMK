@@ -5,6 +5,8 @@
     path: /mnt/data/harvester
     state: directory
 
+
+
 - name: "Copy Hosts file to Servers"
   copy:
     src: ../harvester.zip
@@ -30,18 +32,4 @@
   shell: nohup python3 Main_Listen.py LzOxVuyHgGu9QP4b8skZxUVvS nbLuOAibNpCiiLfgsMwKTPiV4PYNhTK21ddWli40T3dI08YgY4 1120218841278115840-6CgqMItD1yLdo1ejbnhfgNfIBz5upA TqcBGcTzgNKkkLipAw3wmHek8iTg8bM7vwirfL7wYT23t 112.921114 -26.441329 134.0151665 -9.142176 &
   args:
     chdir: /mnt/data/harvester/harvester
-
-# - name: Installs tools
-#   apt:
-#     name: ['nodejs','npm']
-#     state: present
-
-# - name: install npm
-#   shell: npm install
-
-
-# - name: install npm
-#   shell: npm run build -http://"{{ ansible_eth0.ipv4.address }}":5000/
-#   args:
-#     chdir: /mnt/data/web_server/DeadlySins
 

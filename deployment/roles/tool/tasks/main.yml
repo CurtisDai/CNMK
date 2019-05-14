@@ -1,17 +1,10 @@
 ---
-# - name: install web structure 
-#   apt:
-#     name: "{{ web_structure }}"
-#     update_cache: yes
-#     state: latest
-
 - name: install all essential tools 
   apt:
     name: "{{ essential_tools }}"
     update_cache: yes
     state: present
-
-
+    
 - name: install tweepy
   command: pip3 install tweepy
 

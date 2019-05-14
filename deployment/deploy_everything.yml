@@ -7,12 +7,12 @@
   vars_files: vars/vm_settings.yml
 
   roles:
-    # - role: mountvolume
-    # - role: network
-    # - role: tool
-    # - role: docker
-    # - role: couchdb
-    # - role: web
+    - role: mountvolume
+    - role: network
+    - role: tool
+    - role: docker
+    - role: couchdb
+    #this part is for people who prefer spark/hadoop instead of couchdb
     # - role: spark_hadoop
     - role: harvester
-
+    - role: web

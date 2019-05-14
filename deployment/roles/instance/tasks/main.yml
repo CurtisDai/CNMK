@@ -128,7 +128,7 @@
     line: host_key_checking = False
 
 
-- name: add hosts to inventory
+- name: add hosts to vars 
   become: yes
   lineinfile:
     state: "{{ state }}"

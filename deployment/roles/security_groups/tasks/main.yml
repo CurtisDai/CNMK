@@ -3,7 +3,7 @@
   os_security_group:
           name: "{{ item.name }}"
           description: "{{ item.description }}"
-          state: present
+          state: "{{ state }}"
   with_items:
     - name: ssh
       description: visit with ssh
@@ -19,7 +19,7 @@
           port_range_min: "{{ item.port_range_min }}"
           port_range_max: "{{ item.port_range_max }}"
           remote_ip_prefix: "{{ item.remote_ip_prefix }}"
-          state: present
+          state: "{{ state }}"
   with_items: "{{ security_rules }}"
 
 

@@ -1,20 +1,16 @@
 ---
-# - name: install web structure 
-#   apt:
-#     name: "{{ web_structure }}"
-#     update_cache: yes
-#     state: latest
-
 - name: install python
   apt:
     name: python
     update_cache: yes
     state: present
+  when: ansible_distribution == "Ubuntu"
 
 - name: install pip
   apt:
     name: python-pip
     state: latest
+  when: ansible_distribution == "Ubuntu"
 
 - name: install openstacksdk
   pip:

@@ -3,7 +3,6 @@
 #So you may need to heck by yourself that the paras you set are available on yours vm
 
 state: present
-
 instance:
      name1: master
      name2: slave1
@@ -13,10 +12,11 @@ instance:
      availability_zone: melbourne-qh2-uom
      # 2 cores and 9GB
      flavor: uom.mse.2c9g
+     
      image: NeCTAR Ubuntu 18.04 LTS (Bionic) amd64 (with Docker)
      # unimelb internal network
      network: qh2-uom-internal
-     # the key pair you want to use to login virtual machines, make sure you already create one befor run launch.sh
+     # you must change the key pair name to the one you have created on virtual machines, make sure you already create one before run launch.sh
      key_name: nectar
      #the path where you store the key pair 
      key_file_path: ~/.ssh/nectar.pem

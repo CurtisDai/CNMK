@@ -1,0 +1,22 @@
+copy form http://www.oznetnerd.com/installing-ansible-windows/
+
+1. Download Cygwin.
+2. Run the Cygwin installation file.
+3. When asked which download source you’d like to use, select “Install from Internet”.
+4. Select a root directory where you’d like to install the application. I leave it as the default,  C:\cygwin64
+5. Select a directory where you’d like to install your Cygwin packages.
+6. Select the method which suits your internet connection type. e.g If you’re not connecting from behind a proxy, select the “Direct Connection” option.
+7. Select a mirror to download your packages from. Any option in the list will do. 
+8. You’ll then be provided with a list of packages which you can download. Don’t select anything, just click “Next”. Doing so will result in the default applications being installed.
+9. When asking if you want to install dependencies, leave everything as their defaults and click “Next”. This will install everything you need to get Cygwin up and running.
+10. Double click on the “Cygwin64 Terminal” icon.
+11. Set up an alias which points to the “setup-x86_64.exe” file you downloaded in Step 1, like so:
+    alias cyg-get="/cygdrive/d/path/to/cygwin/setup-x86_64.exe -q -P"
+
+12. Install the packages required to get Ansible up and running:
+    curl cygwin32-gcc-g++ gcc-core gcc-g++ git libffi-devel nano openssl openssl-devel python-crypto python2 python2-devel python2-openssl python2-pip python2-setuptools tree
+13. Install Ansible:
+    pip install ansible
+
+
+(Note that if you want to install a specific version, e.g 2.2, append ==2.2  to the end of the command.)
