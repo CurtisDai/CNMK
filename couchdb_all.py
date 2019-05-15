@@ -154,22 +154,6 @@ def db_location_to_json():
 
 
 if __name__ == "__main__":
-    # set_db_score(FILE_SCORE_PATH)
-    # set_db_location(FILE_LOCATION_PATH)
-    #
-    # tweet_score = {"time": "2019-05-13 13:14:05", "user_id": 406184685, "tweet_id": 1127924977510969349, "text": "Think the #giro might be using Google Translate this year. \u2018Also for want of a roof\u2019 ?????? #couchpeloton", "Sloth:": 0.3094}
-    # add_db_score(tweet_score)
-    # tweet_location = {"time": "Mon May 13 13:14:05 +0000 2019", "user_id": 406184685, "place": "Melbourne, Victoria", "coordinate": [145.053135344, -37.972566514250005], "polygon": "20803"}
-    # add_db_location(tweet_location)
-    #
-    # tweet_location = {"time": "Mon May 13 13:14:05 +0000 2019", "user_id": 406184685, "place": "MK", "coordinate": [145., -37.], "polygon": "2"}
-    # update_db_location(tweet_location)
-    #
-    # tweet_location_1 = {"time": "Mon May 13 13:14:05 +0000 2019", "user_id": 406184685, "place": "MK", "coordinate": [145., -37.], "polygon": "2"}
-    # tweet_location_2 = {"time": "Mon May 13 13:14:05 +0000 2019", "user_id": 40618468, "place": "MK", "coordinate": [145., -37.], "polygon": "2"}
-    # user_is_exist_1 = query_db_location_by_user_id(tweet_location_1)
-    # user_is_exist_2 = query_db_location_by_user_id(tweet_location_2)
-    # print(user_is_exist_1, user_is_exist_2)
 
     db_score_to_json()
     db_location_to_json()

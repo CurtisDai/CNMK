@@ -3,6 +3,31 @@ User guide of the Playbook
 Author: Zhaoqian Dai
 *********
 
+The structure of playbook:
+- roles
+  - couchdb 
+  - docker
+  - harvester
+  - instance
+  - local_env
+  - mountvolume
+  - network
+  - security_groups
+  - software
+  - spark_hadoop
+  - tool
+  - web
+- vars
+  - vm_settings.yml
+- deploy_everything.yml
+- env_install_ubuntu.sh
+- env_install_macos.sh
+- launch.yml
+- launch.sh
+- ReadMe.md
+- openrc.file
+
+
 How to use the resources:
 
 If it is the first time you use, run the env_install.sh to make sure all related packages are install on your local:

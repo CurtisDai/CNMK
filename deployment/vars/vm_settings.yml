@@ -76,7 +76,8 @@ security_rules:
        port_range_max: 9200
        remote_ip_prefix: 0.0.0.0/0
 
-master_IP: 172.26.37.226
-slave1_IP: 172.26.37.234
-slave2_IP: 172.26.38.22
-slave3_IP: 172.26.37.175
+
+master_IP: 172.26.38.148
+slave1_IP: 172.26.38.212
+slave2_IP: 172.26.38.202
+slave3_IP: 172.26.37.234
